@@ -24,11 +24,17 @@ const register = async (req, res, next) => {
 const login = async (req, res, next) => {
   try {
     const validatedData = loginSchema.parse(req.body);
-    const token = await authService.login(validatedData.email, validatedData.password);
+    const { token, user } = await authService.login(validatedData.email, validatedData.password);
     
     res.status(200).json({
       message: "Login exitoso",
-      token
+      token,
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role
+      }
     });
   } catch (error) {
     next(error);
