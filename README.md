@@ -111,7 +111,47 @@ El servidor estará disponible en `http://localhost:3000`
 
 ---
 
-## 🐳 Desarrollo con Docker
+## � Frontend React (Cliente)
+
+### Instalación del cliente
+
+```bash
+cd client
+npm install
+```
+
+### Variables de entorno
+
+```bash
+cp .env.example .env.local
+```
+
+Edita `client/.env.local`:
+
+```env
+VITE_API_URL=http://localhost:3000
+```
+
+### Desarrollo
+
+```bash
+# Desde la carpeta client/
+npm run dev
+```
+
+El frontend estará disponible en `http://localhost:3001`
+
+### Build para producción
+
+```bash
+npm run build
+```
+
+Esto genera la carpeta `client/dist/` lista para desplegar.
+
+---
+
+## �🐳 Desarrollo con Docker
 
 ### Usando Docker Compose
 
