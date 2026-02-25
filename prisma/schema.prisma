@@ -1,0 +1,61 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  PARENT
+  STUDENT
+}
+
+enum TransactionType {
+  CREDIT
+  DEBIT
+}
+
+model User {
+  id        String   @id @default(uuid())
+  name      String   @db.VarChar(255)
+  email     String   @unique @db.VarChar(255)
+  password  String
+  role      Role     @default(STUDENT)
+  parentId  String?
+  parent    User?    @relation("ParentStudents", fields: [parentId], references: [id], onDelete: Cascade)
+  students  User[]   @relation("ParentStudents")
+  wallet    Wallet?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([email])
+  @@index([parentId])
+}
+
+model Wallet {
+  id           String        @id @default(uuid())
+  balance      Float         @default(0)
+  studentId    String        @unique
+  student      User          @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  transactions Transaction[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  @@index([studentId])
+}
+
+model Transaction {
+  id          String          @id @default(uuid())
+  amount      Float
+  type        TransactionType
+  description String          @db.VarChar(500)
+  walletId    String
+  wallet      Wallet          @relation(fields: [walletId], references: [id], onDelete: Cascade)
+  createdAt   DateTime        @default(now())
+
+  @@index([walletId])
+  @@index([createdAt])
+}
