@@ -1,0 +1,15 @@
+{
+  "buildCommand": "npm install && npm run build",
+  "outputDirectory": "dist",
+  "devCommand": "npm run dev",
+  "framework": "vite",
+  "functions": {
+    "api/**": {
+      "memory": 1024,
+      "maxDuration": 60
+    }
+  },
+  "env": {
+    "VITE_API_URL": "@vite_api_url"
+  }
+}
