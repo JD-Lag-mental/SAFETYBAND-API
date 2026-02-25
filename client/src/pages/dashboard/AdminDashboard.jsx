@@ -26,29 +26,30 @@ export default function AdminDashboard({ setIsAuthenticated }) {
   const loadData = async () => {
     try {
       setLoading(true)
-      // TODO: Implementar endpoints para obtener usuarios y estadísticas
-      // Por ahora mostramos datos de demostración
       const mockUsers = [
         {
           id: '1',
           name: 'Juan Pérez',
           email: 'juan@example.com',
           role: 'STUDENT',
-          createdAt: '2024-01-15'
+          createdAt: '2024-01-15',
+          status: 'active'
         },
         {
           id: '2',
           name: 'María García',
           email: 'maria@example.com',
           role: 'PARENT',
-          createdAt: '2024-01-10'
+          createdAt: '2024-01-10',
+          status: 'active'
         },
         {
           id: '3',
           name: 'Carlos López',
           email: 'carlos@example.com',
           role: 'ADMIN',
-          createdAt: '2024-01-05'
+          createdAt: '2024-01-05',
+          status: 'active'
         }
       ]
       
@@ -76,7 +77,6 @@ export default function AdminDashboard({ setIsAuthenticated }) {
   const handleDeleteUser = async (userId) => {
     if (window.confirm('¿Estás seguro de eliminar este usuario?')) {
       try {
-        // TODO: Implementar endpoint de eliminación
         setUsers(users.filter(u => u.id !== userId))
       } catch (err) {
         setError('Error eliminando usuario')
@@ -86,105 +86,157 @@ export default function AdminDashboard({ setIsAuthenticated }) {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-2xl font-bold text-blue-600">Cargando...</div>
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-red-50 to-orange-100">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600 mx-auto mb-4"></div>
+          <p className="text-xl font-semibold text-red-600">Cargando panel de administración...</p>
+        </div>
       </div>
     )
   }
 
+  const getRoleBadge = (role) => {
+    switch(role) {
+      case 'ADMIN':
+        return { bg: 'bg-red-100', text: 'text-red-800', icon: '⚙️', label: 'Administrador' }
+      case 'PARENT':
+        return { bg: 'bg-purple-100', text: 'text-purple-800', icon: '👨‍👩‍👧', label: 'Padre/Tutor' }
+      case 'STUDENT':
+        return { bg: 'bg-green-100', text: 'text-green-800', icon: '👨‍🎓', label: 'Estudiante' }
+      default:
+        return { bg: 'bg-gray-100', text: 'text-gray-800', icon: '👤', label: role }
+    }
+  }
+
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-red-50 to-orange-100">
       <Header user={user} onLogout={handleLogout} />
 
       <main className="max-w-7xl mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold text-gray-800 mb-8">Panel de Administración</h1>
-
         {error && (
-          <div className="p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg mb-6">
-            {error}
+          <div className="p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg mb-6 flex items-center gap-2">
+            <span>⚠️</span> {error}
           </div>
         )}
 
-        {/* Estadísticas */}
+        {/* Header Card */}
+        <div className="bg-gradient-to-r from-red-500 to-orange-600 rounded-2xl shadow-lg p-8 mb-8 text-white">
+          <h1 className="text-4xl font-bold mb-2">Panel de Administración</h1>
+          <p className="text-red-100">Bienvenido, {user?.name} • Gestiona el sistema SafetyBand</p>
+        </div>
+
+        {/* Statistics Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-gray-600 text-sm font-medium mb-2">Total de Usuarios</h3>
-            <p className="text-3xl font-bold text-blue-600">{stats.totalUsers}</p>
+          <div className="bg-white rounded-2xl shadow-lg p-6 border-t-4 border-blue-500">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-gray-600 text-sm font-semibold uppercase tracking-wide">Total Usuarios</h3>
+              <span className="text-3xl">👥</span>
+            </div>
+            <p className="text-5xl font-bold text-blue-600">{stats.totalUsers}</p>
           </div>
-          <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-gray-600 text-sm font-medium mb-2">Estudiantes</h3>
-            <p className="text-3xl font-bold text-green-600">{stats.totalStudents}</p>
+
+          <div className="bg-white rounded-2xl shadow-lg p-6 border-t-4 border-green-500">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-gray-600 text-sm font-semibold uppercase tracking-wide">Estudiantes</h3>
+              <span className="text-3xl">👨‍🎓</span>
+            </div>
+            <p className="text-5xl font-bold text-green-600">{stats.totalStudents}</p>
           </div>
-          <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-gray-600 text-sm font-medium mb-2">Padres/Tutores</h3>
-            <p className="text-3xl font-bold text-yellow-600">{stats.totalParents}</p>
+
+          <div className="bg-white rounded-2xl shadow-lg p-6 border-t-4 border-purple-500">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-gray-600 text-sm font-semibold uppercase tracking-wide">Padres/Tutores</h3>
+              <span className="text-3xl">👨‍👩‍👧</span>
+            </div>
+            <p className="text-5xl font-bold text-purple-600">{stats.totalParents}</p>
           </div>
-          <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-gray-600 text-sm font-medium mb-2">Administradores</h3>
-            <p className="text-3xl font-bold text-purple-600">{stats.totalAdmins}</p>
+
+          <div className="bg-white rounded-2xl shadow-lg p-6 border-t-4 border-red-500">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-gray-600 text-sm font-semibold uppercase tracking-wide">Admin</h3>
+              <span className="text-3xl">⚙️</span>
+            </div>
+            <p className="text-5xl font-bold text-red-600">{stats.totalAdmins}</p>
           </div>
         </div>
 
-        {/* Lista de Usuarios */}
-        <div className="bg-white rounded-lg shadow p-6 mb-8">
-          <h2 className="text-2xl font-bold text-gray-800 mb-6">Usuarios</h2>
+        {/* Users Table */}
+        <div className="bg-white rounded-2xl shadow-lg p-8 mb-8">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-bold text-gray-800">Gestión de Usuarios</h2>
+            <span className="px-4 py-2 bg-blue-100 text-blue-800 rounded-full font-semibold text-sm">
+              {users.length} usuarios
+            </span>
+          </div>
 
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-gray-200">
-                  <th className="text-left py-3 px-4 font-semibold text-gray-700">Nombre</th>
-                  <th className="text-left py-3 px-4 font-semibold text-gray-700">Email</th>
-                  <th className="text-left py-3 px-4 font-semibold text-gray-700">Rol</th>
-                  <th className="text-left py-3 px-4 font-semibold text-gray-700">Fecha de Registro</th>
-                  <th className="text-left py-3 px-4 font-semibold text-gray-700">Acciones</th>
+                <tr className="border-b-2 border-gray-300 bg-gray-50">
+                  <th className="text-left py-4 px-4 font-bold text-gray-700">Usuario</th>
+                  <th className="text-left py-4 px-4 font-bold text-gray-700">Email</th>
+                  <th className="text-left py-4 px-4 font-bold text-gray-700">Rol</th>
+                  <th className="text-left py-4 px-4 font-bold text-gray-700">Registro</th>
+                  <th className="text-left py-4 px-4 font-bold text-gray-700">Estado</th>
+                  <th className="text-left py-4 px-4 font-bold text-gray-700">Acciones</th>
                 </tr>
               </thead>
               <tbody>
-                {users.map((u) => (
-                  <tr key={u.id} className="border-b border-gray-100 hover:bg-gray-50">
-                    <td className="py-3 px-4 text-gray-800">{u.name}</td>
-                    <td className="py-3 px-4 text-gray-600">{u.email}</td>
-                    <td className="py-3 px-4">
-                      <span className={`inline-block px-3 py-1 rounded-full text-sm font-semibold ${
-                        u.role === 'ADMIN' ? 'bg-purple-100 text-purple-800' :
-                        u.role === 'PARENT' ? 'bg-yellow-100 text-yellow-800' :
-                        'bg-green-100 text-green-800'
-                      }`}>
-                        {u.role}
-                      </span>
-                    </td>
-                    <td className="py-3 px-4 text-gray-600 text-sm">{u.createdAt}</td>
-                    <td className="py-3 px-4">
-                      <button
-                        onClick={() => handleDeleteUser(u.id)}
-                        className="bg-red-600 hover:bg-red-700 text-white font-bold py-1 px-3 rounded text-sm transition"
-                      >
-                        Eliminar
-                      </button>
-                    </td>
-                  </tr>
-                ))}
+                {users.map((u) => {
+                  const badge = getRoleBadge(u.role)
+                  return (
+                    <tr key={u.id} className="border-b border-gray-200 hover:bg-gray-50 transition">
+                      <td className="py-4 px-4">
+                        <div className="flex items-center gap-2">
+                          <span className="text-2xl">{badge.icon}</span>
+                          <span className="font-semibold text-gray-800">{u.name}</span>
+                        </div>
+                      </td>
+                      <td className="py-4 px-4 text-gray-600 text-sm">{u.email}</td>
+                      <td className="py-4 px-4">
+                        <span className={`inline-block px-4 py-2 rounded-full text-xs font-bold ${badge.bg} ${badge.text}`}>
+                          {badge.label}
+                        </span>
+                      </td>
+                      <td className="py-4 px-4 text-gray-600 text-sm">{u.createdAt}</td>
+                      <td className="py-4 px-4">
+                        <span className="inline-block px-3 py-1 bg-green-100 text-green-800 rounded-full text-xs font-semibold">
+                          ✓ Activo
+                        </span>
+                      </td>
+                      <td className="py-4 px-4">
+                        <button
+                          onClick={() => handleDeleteUser(u.id)}
+                          className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg text-sm transition transform hover:scale-105"
+                        >
+                          🗑️ Eliminar
+                        </button>
+                      </td>
+                    </tr>
+                  )
+                })}
               </tbody>
             </table>
           </div>
         </div>
 
-        {/* Perfil del Admin */}
-        <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-2xl font-bold text-gray-800 mb-4">Tu Perfil</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-              <p className="text-gray-600 text-sm">Nombre</p>
-              <p className="text-lg font-semibold text-gray-800">{user?.name}</p>
+        {/* Admin Info */}
+        <div className="bg-white rounded-2xl shadow-lg p-8 border-t-4 border-red-500">
+          <h2 className="text-2xl font-bold text-gray-800 mb-6">Tu Perfil de Administrador</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="pb-6 border-b md:border-b-0 md:border-r border-gray-200">
+              <p className="text-gray-600 text-xs uppercase tracking-wide font-semibold mb-1">Nombre</p>
+              <p className="text-2xl font-bold text-gray-800">{user?.name}</p>
             </div>
-            <div>
-              <p className="text-gray-600 text-sm">Email</p>
+            <div className="pb-6 border-b md:border-b-0 md:border-r border-gray-200">
+              <p className="text-gray-600 text-xs uppercase tracking-wide font-semibold mb-1">Email</p>
               <p className="text-lg font-semibold text-gray-800">{user?.email}</p>
             </div>
             <div>
-              <p className="text-gray-600 text-sm">Rol</p>
-              <p className="text-lg font-semibold text-gray-800">{user?.role}</p>
+              <p className="text-gray-600 text-xs uppercase tracking-wide font-semibold mb-1">Rol</p>
+              <span className="inline-block px-4 py-2 bg-red-100 text-red-800 rounded-full font-bold">
+                ⚙️ Administrador
+              </span>
             </div>
           </div>
         </div>

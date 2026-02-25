@@ -20,8 +20,12 @@ function App() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-2xl font-bold text-blue-600">Cargando...</div>
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-500 to-blue-700">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
+          <div className="text-2xl font-bold text-white">SafetyBand</div>
+          <div className="text-white text-sm mt-2">Cargando...</div>
+        </div>
       </div>
     )
   }
@@ -29,15 +33,61 @@ function App() {
   return (
     <Router>
       <Routes>
+        {/* LOGIN */}
         <Route 
           path="/login" 
           element={!isAuthenticated ? <LoginPage setIsAuthenticated={setIsAuthenticated} /> : <Navigate to="/dashboard" />} 
         />
+
+        {/* DASHBOARD ROUTER - Redirige según rol */}
         <Route 
           path="/dashboard" 
           element={
             <ProtectedRoute isAuthenticated={isAuthenticated}>
               <RoleRouter />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* RUTAS POR ROL - ESTUDIANTE */}
+        <Route 
+          path="/dashboard/student" 
+          element={
+            <ProtectedRoute isAuthenticated={isAuthenticated}>
+              <StudentDashboard setIsAuthenticated={setIsAuthenticated} />
+            </ProtectedRoute>
+          } 
+        />
+
+        {/* RUTAS POR ROL - PADRE/TUTOR */}
+        <Route 
+          path="/dashboard/parent" 
+          element={
+            <ProtectedRoute isAuthenticated={isAuthenticated}>
+              <ParentDashboard setIsAuthenticated={setIsAuthenticated} />
+            </ProtectedRoute>
+          } 
+        />
+
+        {/* RUTAS POR ROL - ADMINISTRADOR */}
+        <Route 
+          path="/dashboard/admin" 
+          element={
+            <ProtectedRoute isAuthenticated={isAuthenticated}>
+              <AdminDashboard setIsAuthenticated={setIsAuthenticated} />
+            </ProtectedRoute>
+          } 
+        />
+
+        {/* RUTA POR DEFECTO */}
+        <Route path="/" element={<Navigate to={isAuthenticated ? "/dashboard" : "/login"} />} />
+        <Route path="*" element={<Navigate to="/login" />} />
+      </Routes>
+    </Router>
+  )
+}
+
+export default App
             </ProtectedRoute>
           } 
         />
