@@ -88,37 +88,3 @@ function App() {
 }
 
 export default App
-            </ProtectedRoute>
-          } 
-        />
-        <Route 
-          path="/dashboard/student" 
-          element={
-            <ProtectedRoute isAuthenticated={isAuthenticated}>
-              <StudentDashboard setIsAuthenticated={setIsAuthenticated} />
-            </ProtectedRoute>
-          } 
-        />
-        <Route 
-          path="/dashboard/parent" 
-          element={
-            <ProtectedRoute isAuthenticated={isAuthenticated}>
-              <ParentDashboard setIsAuthenticated={setIsAuthenticated} />
-            </ProtectedRoute>
-          } 
-        />
-        <Route 
-          path="/dashboard/admin" 
-          element={
-            <ProtectedRoute isAuthenticated={isAuthenticated}>
-              <AdminDashboard setIsAuthenticated={setIsAuthenticated} />
-            </ProtectedRoute>
-          } 
-        />
-        <Route path="/" element={<Navigate to={isAuthenticated ? "/dashboard" : "/login"} />} />
-      </Routes>
-    </Router>
-  )
-}
-
-export default App
