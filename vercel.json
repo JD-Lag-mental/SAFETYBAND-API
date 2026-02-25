@@ -2,9 +2,5 @@
   "buildCommand": "cd client && npm install && npm run build",
   "outputDirectory": "client/dist",
   "devCommand": "cd client && npm run dev",
-  "framework": "vite",
-  "env": {
-    "VITE_API_URL": "@vite_api_url"
-  },
-  "envPrefix": "VITE_"
+  "framework": "vite"
 }
