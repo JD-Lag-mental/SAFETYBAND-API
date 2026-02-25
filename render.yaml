@@ -3,7 +3,7 @@ services:
     name: safetyband-api
     runtime: node
     plan: free
-    buildCommand: npm install
+    buildCommand: npm install && npm run build
     startCommand: npm start
     envVars:
       - key: NODE_ENV
@@ -12,5 +12,11 @@ services:
         fromDatabase:
           name: safetyband_db
           property: connectionString
+      - key: DIRECT_DATABASE_URL
+        fromDatabase:
+          name: safetyband_db
+          property: connectionString
       - key: JWT_SECRET
         sync: false
+      - key: PORT
+        value: 3000
