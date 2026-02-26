@@ -14,7 +14,21 @@ function App() {
 
   useEffect(() => {
     const token = localStorage.getItem('token')
-    setIsAuthenticated(!!token)
+    const userStr = localStorage.getItem('user')
+    
+    // Validar que ambos existan y user sea válido JSON
+    if (token && userStr && userStr !== 'undefined') {
+      try {
+        JSON.parse(userStr)
+        setIsAuthenticated(true)
+      } catch (error) {
+        localStorage.removeItem('token')
+        localStorage.removeItem('user')
+        setIsAuthenticated(false)
+      }
+    } else {
+      setIsAuthenticated(false)
+    }
     setLoading(false)
   }, [])
 

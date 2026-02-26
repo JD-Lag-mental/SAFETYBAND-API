@@ -39,11 +39,13 @@ export default function LoginPage({ setIsAuthenticated }) {
         })
       }
 
-      if (response.data.token) {
+      if (response.data.token && response.data.user) {
         localStorage.setItem('token', response.data.token)
         localStorage.setItem('user', JSON.stringify(response.data.user))
         setIsAuthenticated(true)
         navigate('/dashboard')
+      } else {
+        setError('Datos incompletos de usuario. Intenta nuevamente.')
       }
     } catch (err) {
       setError(err.response?.data?.message || 'Error en la autenticación')
